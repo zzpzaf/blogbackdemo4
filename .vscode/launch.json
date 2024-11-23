@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-Blogbackdemo2Application<blogbackdemo2>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.zzpzaf.se.blogbackdemo2.Blogbackdemo2Application",
+            "projectName": "blogbackdemo2",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
