@@ -11,6 +11,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.zzpzaf.se.blogbackdemo4.dbObjects.Article;
+import com.zzpzaf.se.blogbackdemo4.dbObjects.ArticleDTO;
+import com.zzpzaf.se.blogbackdemo4.dbObjects.Category;
+
 @RestController
 public class PostsController {
 
@@ -85,8 +89,8 @@ public class PostsController {
 
 
     @GetMapping(value = "/articles" + "/articleId/{id}")
-    public ResponseEntity<Article> getArticleById(@PathVariable int id) {
-        Article article;
+    public ResponseEntity<ArticleDTO> getArticleById(@PathVariable int id) {
+        ArticleDTO article;
         article = postsRepository.getArticleById(id);
         if (article != null) {
             return new ResponseEntity<>(article, HttpStatus.OK);
@@ -96,8 +100,8 @@ public class PostsController {
     }
 
     @GetMapping(value = "/articles" + "/articleSlug/{slug}")
-    public ResponseEntity<Article> getArticleBySlug(@PathVariable String slug) {
-        Article article;
+    public ResponseEntity<ArticleDTO> getArticleBySlug(@PathVariable String slug) {
+        ArticleDTO article;
         article = postsRepository.getArticleBySlug(slug);
         if (article != null) {
             return new ResponseEntity<>(article, HttpStatus.OK);

@@ -10,6 +10,10 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import com.zzpzaf.se.blogbackdemo4.dbObjects.Article;
+import com.zzpzaf.se.blogbackdemo4.dbObjects.ArticleDTO;
+import com.zzpzaf.se.blogbackdemo4.dbObjects.Category;
+
 @Repository
 public class PostsRepository implements IPostsRepository {
 
@@ -18,16 +22,21 @@ public class PostsRepository implements IPostsRepository {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+
+    static final String CATEGORIES_TABLE = "categories";
+    static final String ARTICLES_TABLE = "articles";
+    static final String USERS_TABLE = "users";
+
     @Override
     public List<Category> getCategories() {
         logger.info("PostsRepository - getCategories");
-        String sql = "SELECT * FROM testcategories";
+        String sql = "SELECT * FROM " + CATEGORIES_TABLE ;
         return jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(Category.class));
     }
 
     @Override
     public Category getCategoryById(int id) {
-        String selQuery = "SELECT * FROM testcategories WHERE categoryId = ?";
+        String selQuery = "SELECT * FROM " + CATEGORIES_TABLE + " WHERE categoryId = ?";
         Category category = new Category();
         try {
             category = jdbcTemplate.queryForObject(selQuery, BeanPropertyRowMapper.newInstance(Category.class), id);
@@ -41,13 +50,13 @@ public class PostsRepository implements IPostsRepository {
 
     @Override
     public List<Article> getArticles() {
-        String sql = "SELECT * FROM testarticles";
+        String sql = "SELECT * FROM " + ARTICLES_TABLE ;
         return jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(Article.class));
     }
 
     @Override
     public List<Article> getCategoryArticles(int id) {
-        String sql = "SELECT * FROM testarticles WHERE categoryId = ?";
+        String sql = "SELECT * FROM " + ARTICLES_TABLE+ " WHERE categoryId = ?";
         List<Article> catArticles = new ArrayList<Article>();
         try {
             catArticles = jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(Article.class),id);
@@ -59,11 +68,34 @@ public class PostsRepository implements IPostsRepository {
 
 
     @Override
-    public Article getArticleById(int id) {
-        String selQuery = "SELECT * FROM testarticles WHERE articleId = ?";
-        Article article = new Article();
+    public ArticleDTO getArticleById(int id) {
+        // String selQuery = "SELECT * FROM testarticles WHERE articleId = ?";
+        String selQuery = String.format("""
+            SELECT 
+                a.articleId, 
+                a.categoryId, 
+                a.userId, 
+                a.articleTitle, 
+                a.articleSubTitle, 
+                a.articleSlug, 
+                a.articleDescription, 
+                a.articleContent, 
+                a.articleCreationTimestamp, 
+                a.articleLastUpdTimestamp, 
+                u.userSlugName, 
+                u.userName, 
+                u.userSurname 
+            FROM %s a 
+            JOIN %s u 
+            ON a.userId = u.userId 
+            WHERE a.articleId = ?;
+            """, ARTICLES_TABLE, USERS_TABLE);
+
+
+
+        ArticleDTO article = new ArticleDTO();
         try {
-            article = jdbcTemplate.queryForObject(selQuery, BeanPropertyRowMapper.newInstance(Article.class), id);
+            article = jdbcTemplate.queryForObject(selQuery, BeanPropertyRowMapper.newInstance(ArticleDTO.class), id);
         } catch (Exception e) {
             // logger.info(">===>> PostsRepository ERRORs: " + e.getMessage());
         }
@@ -71,11 +103,31 @@ public class PostsRepository implements IPostsRepository {
     }
 
     @Override
-    public Article getArticleBySlug(String slug) {
-        String selQuery = "SELECT * FROM testarticles WHERE articleSlug = ?";
-        Article article = new Article();
+    public ArticleDTO getArticleBySlug(String slug) {
+        // String selQuery = "SELECT * FROM testarticles WHERE articleSlug = ?";
+        String selQuery = String.format("""
+            SELECT 
+                a.articleId, 
+                a.categoryId, 
+                a.userId, 
+                a.articleTitle, 
+                a.articleSubTitle, 
+                a.articleSlug, 
+                a.articleDescription, 
+                a.articleContent, 
+                a.articleCreationTimestamp, 
+                a.articleLastUpdTimestamp, 
+                u.userSlugName, 
+                u.userName, 
+                u.userSurname 
+            FROM %s a 
+            JOIN %s u 
+            ON a.userId = u.userId 
+            WHERE a.articleSlug = ?;
+            """, ARTICLES_TABLE, USERS_TABLE);
+        ArticleDTO article = new ArticleDTO();
         try {
-            article = jdbcTemplate.queryForObject(selQuery, BeanPropertyRowMapper.newInstance(Article.class), slug);
+            article = jdbcTemplate.queryForObject(selQuery, BeanPropertyRowMapper.newInstance(ArticleDTO.class), slug);
         } catch (Exception e) {
             // logger.info(">===>> PostsRepository ERRORs: " + e.getMessage());
         }
