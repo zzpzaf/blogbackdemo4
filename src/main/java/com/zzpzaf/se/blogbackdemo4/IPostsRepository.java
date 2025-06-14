@@ -16,8 +16,16 @@ public interface IPostsRepository {
     List<Article> getArticles(); 
     List<Article> getCategoryArticles(int id); 
 
-    ArticleDTO getArticleById(int id);
-    ArticleDTO getArticleBySlug(String slug);
+    ArticleDTO getArticleByClientUUID(String uuid);
+    ArticleDTO getArticleByUUID(String uuid);
+
+    ArticleDTO getArticleDTOById(int id);
+    ArticleDTO getArticleDTOBySlug(String slug);
+
+    ArticleDTO addArticle(Article newArticle);
+    ArticleDTO updateArticle(Article newArticle);
+
+
 
 }
 

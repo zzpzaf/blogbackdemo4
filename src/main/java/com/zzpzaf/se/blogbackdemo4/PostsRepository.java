@@ -2,6 +2,7 @@ package com.zzpzaf.se.blogbackdemo4;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.zzpzaf.se.blogbackdemo4.dbObjects.Article;
 import com.zzpzaf.se.blogbackdemo4.dbObjects.ArticleDTO;
@@ -22,7 +24,6 @@ public class PostsRepository implements IPostsRepository {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-
     static final String CATEGORIES_TABLE = "categories";
     static final String ARTICLES_TABLE = "articles";
     static final String USERS_TABLE = "users";
@@ -30,7 +31,7 @@ public class PostsRepository implements IPostsRepository {
     @Override
     public List<Category> getCategories() {
         logger.info("PostsRepository - getCategories");
-        String sql = "SELECT * FROM " + CATEGORIES_TABLE ;
+        String sql = "SELECT * FROM " + CATEGORIES_TABLE;
         return jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(Category.class));
     }
 
@@ -46,56 +47,56 @@ public class PostsRepository implements IPostsRepository {
         return category;
     }
 
-
-
     @Override
     public List<Article> getArticles() {
-        String sql = "SELECT * FROM " + ARTICLES_TABLE ;
+        String sql = "SELECT * FROM " + ARTICLES_TABLE;
         return jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(Article.class));
     }
 
     @Override
     public List<Article> getCategoryArticles(int id) {
-        String sql = "SELECT * FROM " + ARTICLES_TABLE+ " WHERE categoryId = ?";
+        String sql = "SELECT * FROM " + ARTICLES_TABLE + " WHERE categoryId = ?";
         List<Article> catArticles = new ArrayList<Article>();
         try {
-            catArticles = jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(Article.class),id);
+            catArticles = jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(Article.class), id);
         } catch (Exception e) {
             // logger.info(">===>> PostsRepository ERRORs: " + e.getMessage());
         }
         return catArticles;
     }
 
-
     @Override
-    public ArticleDTO getArticleById(int id) {
+    public ArticleDTO getArticleDTOById(int id) {
         // String selQuery = "SELECT * FROM testarticles WHERE articleId = ?";
         String selQuery = String.format("""
-            SELECT 
-                a.articleId, 
-                a.categoryId, 
-                a.userId, 
-                a.articleTitle, 
-                a.articleSubTitle, 
-                a.articleSlug, 
-                a.articleDescription, 
-                a.articleContent, 
-                a.articleCreationTimestamp, 
-                a.articleLastUpdTimestamp, 
-                u.userSlugName, 
-                u.userName, 
-                u.userSurname 
-            FROM %s a 
-            JOIN %s u 
-            ON a.userId = u.userId 
-            WHERE a.articleId = ?;
-            """, ARTICLES_TABLE, USERS_TABLE);
-
-
+                SELECT
+                    a.articleId,
+                    a.categoryId,
+                    a.userId,
+                    a.cont_type_id,
+                    a.articleTitle,
+                    a.articleSubTitle,
+                    a.articleSlug,
+                    a.articleDescription,
+                    a.articleContent,
+                    a.articleStatusId,
+                    a.articleClientUUID,
+                    a.articleUUID,
+                    a.articleCreationTimestamp,
+                    a.articleLastUpdTimestamp,
+                    u.userSlugName,
+                    u.userName,
+                    u.userSurname
+                FROM %s a
+                JOIN %s u
+                ON a.userId = u.userId
+                WHERE a.articleId = ?;
+                """, ARTICLES_TABLE, USERS_TABLE);
 
         ArticleDTO article = new ArticleDTO();
         try {
             article = jdbcTemplate.queryForObject(selQuery, BeanPropertyRowMapper.newInstance(ArticleDTO.class), id);
+            logger.info(">===>> PostsRepository getArticleDTOById() : " + article.getArticleClientUUID());
         } catch (Exception e) {
             // logger.info(">===>> PostsRepository ERRORs: " + e.getMessage());
         }
@@ -103,28 +104,32 @@ public class PostsRepository implements IPostsRepository {
     }
 
     @Override
-    public ArticleDTO getArticleBySlug(String slug) {
+    public ArticleDTO getArticleDTOBySlug(String slug) {
         // String selQuery = "SELECT * FROM testarticles WHERE articleSlug = ?";
         String selQuery = String.format("""
-            SELECT 
-                a.articleId, 
-                a.categoryId, 
-                a.userId, 
-                a.articleTitle, 
-                a.articleSubTitle, 
-                a.articleSlug, 
-                a.articleDescription, 
-                a.articleContent, 
-                a.articleCreationTimestamp, 
-                a.articleLastUpdTimestamp, 
-                u.userSlugName, 
-                u.userName, 
-                u.userSurname 
-            FROM %s a 
-            JOIN %s u 
-            ON a.userId = u.userId 
-            WHERE a.articleSlug = ?;
-            """, ARTICLES_TABLE, USERS_TABLE);
+                SELECT
+                    a.articleId,
+                    a.categoryId,
+                    a.userId,
+                    a.cont_type_id,
+                    a.articleTitle,
+                    a.articleSubTitle,
+                    a.articleSlug,
+                    a.articleDescription,
+                    a.articleContent,
+                    a.articleStatusId,
+                    a.articleClientUUID,
+                    a.articleUUID,
+                    a.articleCreationTimestamp,
+                    a.articleLastUpdTimestamp,
+                    u.userSlugName,
+                    u.userName,
+                    u.userSurname
+                FROM %s a
+                JOIN %s u
+                ON a.userId = u.userId
+                WHERE a.articleSlug = ?;
+                """, ARTICLES_TABLE, USERS_TABLE);
         ArticleDTO article = new ArticleDTO();
         try {
             article = jdbcTemplate.queryForObject(selQuery, BeanPropertyRowMapper.newInstance(ArticleDTO.class), slug);
@@ -134,6 +139,151 @@ public class PostsRepository implements IPostsRepository {
         // logger.info(">===>> PostsRepository article: " + article.toString());
         return article;
     }
+
+    @Override
+    @Transactional(rollbackFor = java.lang.Exception.class)
+    public ArticleDTO addArticle(Article newArticle) {
+        int status = 0;
+        String uuid = UUID.randomUUID().toString();
+        newArticle.setArticleClientUUID(uuid);
+        logger.info(">===>> PostsRepository - addArticle() - New Article UUID: " + uuid + " - " + newArticle.getArticleClientUUID());
+        // newArticle.setArticleStatusId(0);
+        String insQuery = "INSERT INTO " + ARTICLES_TABLE + " ( " +
+                "categoryId, " +
+                "userId, " +
+                "articleTitle, " +
+                "articleSubTitle, " +
+                "articleSlug, " +
+                "articleDescription, " +
+                "articleContent, " +
+                "articleClientUUID" +
+                ")" +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
+        // logger.info(">===>> PostsRepository - addArticle() - Adding Article: " + newArticle.toString());
+        try {
+            status = jdbcTemplate.update(insQuery, newArticle.getCategoryId(), newArticle.getUserId(),
+                    newArticle.getArticleTitle(), newArticle.getArticleSubTitle(), newArticle.getArticleSlug(),
+                    newArticle.getArticleDescription(), newArticle.getArticleContent(), newArticle.getArticleClientUUID() );
+        } catch (Exception e) {
+            logger.error(">===>> PostsRepository - addArticle() - ERRORs: " + e.getMessage());
+        }
+        if (status == 1) {
+            logger.info(">===>> " + "PostsRepository " + "addArticle: " + newArticle.toString());
+            return getArticleByClientUUID(uuid);
+        }        
+
+        return null;        
+
+    }
+
+
+    @Override
+    @Transactional(rollbackFor = java.lang.Exception.class)
+    public ArticleDTO updateArticle(Article article) {
+        int status = 0;
+        logger.info(">===>> PostsRepository - updateArticle() - Article UUID: " + article.getArticleClientUUID());
+        String updateQuery = "UPDATE " + ARTICLES_TABLE + " SET " +
+                "categoryId = ?, " +
+                "userId = ?, " +
+                "articleTitle = ?, " +
+                "articleSubTitle = ?, " +
+                "articleSlug = ?, " +
+                "articleDescription = ?, " +
+                "articleContent = ? " +
+                "WHERE articleUUID = ?";
+
+        try {
+            status = jdbcTemplate.update(updateQuery, article.getCategoryId(), article.getUserId(),
+                    article.getArticleTitle(), article.getArticleSubTitle(), article.getArticleSlug(),
+                    article.getArticleDescription(), article.getArticleContent(), article.getArticleUUID());
+            // logger.info(">===>> PostsRepository - updateArticle() - status: " + status ); 
+        } catch (Exception e) {
+            logger.error(">===>> PostsRepository - updateArticle() - ERRORs: " + e.getMessage());
+        }
+        if (status == 1) {
+            // logger.info(">===>> " + "PostsRepository " + "updateArticle: " + article.toString());
+            return getArticleByUUID(article.getArticleUUID());
+        }        
+
+        return null;        
+
+    }
+
+
+
+
+    @Override
+    public ArticleDTO getArticleByClientUUID(String uuid) {
+        String selQuery = String.format("""
+                SELECT
+                    a.articleId,
+                    a.categoryId,
+                    a.userId,
+                    a.cont_type_id,
+                    a.articleTitle,
+                    a.articleSubTitle,
+                    a.articleSlug,
+                    a.articleDescription,
+                    a.articleContent,
+                    a.articleStatusId,
+                    a.articleClientUUID,
+                    a.articleUUID,
+                    a.articleCreationTimestamp,
+                    a.articleLastUpdTimestamp,
+                    u.userSlugName,
+                    u.userName,
+                    u.userSurname
+                FROM %s a
+                JOIN %s u
+                ON a.userId = u.userId
+                WHERE a.articleClientUUID = ?;
+                """, ARTICLES_TABLE, USERS_TABLE);
+        ArticleDTO article = new ArticleDTO();
+        try {
+            article = jdbcTemplate.queryForObject(selQuery, BeanPropertyRowMapper.newInstance(ArticleDTO.class), uuid);
+        } catch (Exception e) {
+            logger.info(">===>> PostsRepository  getArticleByClientUUID() ERRORs: " + e.getMessage());
+        }
+        return article;
+    }
+
+    @Override
+    public ArticleDTO getArticleByUUID(String uuid) {
+        String selQuery = String.format("""
+                SELECT
+                    a.articleId,
+                    a.categoryId,
+                    a.userId,
+                    a.cont_type_id,
+                    a.articleTitle,
+                    a.articleSubTitle,
+                    a.articleSlug,
+                    a.articleDescription,
+                    a.articleContent,
+                    a.articleStatusId,
+                    a.articleClientUUID,
+                    a.articleUUID,
+                    a.articleCreationTimestamp,
+                    a.articleLastUpdTimestamp,
+                    u.userSlugName,
+                    u.userName,
+                    u.userSurname
+                FROM %s a
+                JOIN %s u
+                ON a.userId = u.userId
+                WHERE a.articleUUID = ?;
+                """, ARTICLES_TABLE, USERS_TABLE);
+        ArticleDTO article = new ArticleDTO();
+        try {
+            article = jdbcTemplate.queryForObject(selQuery, BeanPropertyRowMapper.newInstance(ArticleDTO.class), uuid);
+        } catch (Exception e) {
+            logger.info(">===>> PostsRepository getArticleByUUID() - ERRORs: " + e.getMessage());
+        }
+        // logger.info(">===>> PostsRepository article: " + article.toString());
+        return article;
+    }
+
 
 
 }

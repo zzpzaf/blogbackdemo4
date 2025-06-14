@@ -90,6 +90,25 @@ COMMIT;
 @
 
 
+-- ------------------------------------
+-- Table structure for content_types 
+-- 250612
+-- ------------------------------------
+BEGIN;
+@
+DROP TABLE IF EXISTS `content_types`;
+@
+CREATE TABLE `content_types` (
+  `cont_type_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `cont_type_identifier` varchar(10) NOT NULL,
+  PRIMARY KEY (`cont_type_id`)
+);
+@
+COMMIT;
+@
+
+
+
 -- ----------------------------------------
 -- Trigger for auto-hashingn of password
 -- ----------------------------------------

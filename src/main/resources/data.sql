@@ -167,3 +167,12 @@ INSERT INTO testarticles(categoryId,articleTitle,articleSubTitle,articleContent)
  The term “fully managed” in the context of cloud computing means that the maintenance and management responsibilities of the service are handled by the cloud provider. This means the underlying infrastructure, software updates, security, scalability, availability and disaster recovery are all managed by the cloud provider.');
 COMMIT;
 
+
+-- ------------------------------------
+-- 250612
+-- ------------------------------------
+BEGIN;
+INSERT INTO `content_types` (`cont_type_identifier`) VALUES ('plain');
+INSERT INTO `content_types` (`cont_type_identifier`) VALUES ('mark');
+INSERT INTO `content_types` (`cont_type_identifier`) VALUES ('html');
+COMMIT;

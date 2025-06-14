@@ -6,11 +6,15 @@ public class ArticleDTO {
     private int articleId;
     private int categoryId;
     private int userId;
+    private int cont_type_id;
     private String articleTitle;
     private String articleSubTitle;
     private String articleSlug;
     private String articleDescription;
     private String articleContent;
+    private int articleStatusId;
+    private String articleClientUUID;
+    private String articleUUID;
     private Timestamp articleCreationTimestamp;
     private Timestamp articleLastUpdTimestamp;
     private String userSlugName;
@@ -21,24 +25,33 @@ public class ArticleDTO {
     public ArticleDTO() {}
 
     // Parameterized Constructor
-    public ArticleDTO(int articleId, int categoryId, int userId, String articleTitle, String articleSubTitle,
-                      String articleSlug, String articleDescription, String articleContent,
-                      Timestamp articleCreationTimestamp, Timestamp articleLastUpdTimestamp,
-                      String userSlugName, String userName, String userSurname) {
+
+
+
+
+    public ArticleDTO(int articleId, int categoryId, int userId, int cont_type_id, String articleTitle, String articleSubTitle,
+            String articleSlug, String articleDescription, String articleContent, int articleStatusId,
+            String articleClientUUID, String articleUUID, Timestamp articleCreationTimestamp,
+            Timestamp articleLastUpdTimestamp, String userSlugName, String userName, String userSurname) {
         this.articleId = articleId;
         this.categoryId = categoryId;
         this.userId = userId;
+        this.cont_type_id = cont_type_id;    
         this.articleTitle = articleTitle;
         this.articleSubTitle = articleSubTitle;
         this.articleSlug = articleSlug;
         this.articleDescription = articleDescription;
         this.articleContent = articleContent;
+        this.articleStatusId = articleStatusId;
+        this.articleClientUUID = articleClientUUID;
+        this.articleUUID = articleUUID;
         this.articleCreationTimestamp = articleCreationTimestamp;
         this.articleLastUpdTimestamp = articleLastUpdTimestamp;
         this.userSlugName = userSlugName;
         this.userName = userName;
         this.userSurname = userSurname;
     }
+
 
     // Getters and Setters
     public int getArticleId() {
@@ -63,6 +76,14 @@ public class ArticleDTO {
 
     public void setUserId(int userId) {
         this.userId = userId;
+    }
+
+    public int getCont_type_id() {
+        return cont_type_id;
+    }
+
+    public void setCont_type_id(int cont_type_id) {
+        this.cont_type_id = cont_type_id;
     }
 
     public String getArticleTitle() {
@@ -105,6 +126,34 @@ public class ArticleDTO {
         this.articleContent = articleContent;
     }
 
+    
+    public int getArticleStatusId() {
+        return articleStatusId;
+    }
+
+    public void setArticleStatusId(int articleStatusId) {
+        this.articleStatusId = articleStatusId;
+    }
+
+
+    public String getArticleClientUUID() {
+        return articleClientUUID;
+    }
+
+    public void setArticleClientUUID(String articleClientUUID) {
+        this.articleClientUUID = articleClientUUID;
+    }
+
+
+    public String getArticleUUID() {
+        return articleUUID;
+    }
+
+    public void setArticleUUID(String articleUUID) {
+        this.articleUUID = articleUUID;
+    }
+
+    
     public Timestamp getArticleCreationTimestamp() {
         return articleCreationTimestamp;
     }
@@ -152,6 +201,7 @@ public class ArticleDTO {
                 "articleId=" + articleId +
                 ", categoryId=" + categoryId +
                 ", userId=" + userId +
+                ", cont_type_id=" + cont_type_id +
                 ", articleTitle='" + articleTitle + '\'' +
                 ", articleSubTitle='" + articleSubTitle + '\'' +
                 ", articleSlug='" + articleSlug + '\'' +

@@ -6,12 +6,14 @@ public class Article {
     private int articleId;
     private int categoryId;
     private int userId;
+    private int cont_type_id;
     private String articleTitle;
     private String articleSubTitle;
     private String articleSlug;
     private String articleDescription;
     private String articleContent;
     private int articleStatusId;
+    private String articleClientUUID;
     private String articleUUID;
     private Timestamp articleCreationTimestamp;
     private Timestamp articleLastUpdTimestamp;
@@ -20,26 +22,31 @@ public class Article {
     public Article() {}
 
     // Parameterized Constructor
-    public Article(int articleId, int categoryId, int userId, String articleTitle, String articleSubTitle,
-                   String articleSlug, String articleDescription, String articleContent, int articleStatusId,
-                   String articleUUID, Timestamp articleCreationTimestamp, Timestamp articleLastUpdTimestamp) {
+
+
+    // Getters and Setters
+    public int getArticleId() {
+        return articleId;
+    }
+
+    public Article(int articleId, int categoryId, int userId, int cont_type_id, String articleTitle, String articleSubTitle,
+            String articleSlug, String articleDescription, String articleContent, int articleStatusId,
+            String articleClientUUID, String articleUUID, Timestamp articleCreationTimestamp,
+            Timestamp articleLastUpdTimestamp) {
         this.articleId = articleId;
         this.categoryId = categoryId;
         this.userId = userId;
+        this.cont_type_id = cont_type_id;
         this.articleTitle = articleTitle;
         this.articleSubTitle = articleSubTitle;
         this.articleSlug = articleSlug;
         this.articleDescription = articleDescription;
         this.articleContent = articleContent;
         this.articleStatusId = articleStatusId;
+        this.articleClientUUID = articleClientUUID;
         this.articleUUID = articleUUID;
         this.articleCreationTimestamp = articleCreationTimestamp;
         this.articleLastUpdTimestamp = articleLastUpdTimestamp;
-    }
-
-    // Getters and Setters
-    public int getArticleId() {
-        return articleId;
     }
 
     public void setArticleId(int articleId) {
@@ -60,6 +67,14 @@ public class Article {
 
     public void setUserId(int userId) {
         this.userId = userId;
+    }
+
+    public int getCont_type_id() {
+        return cont_type_id;
+    }
+
+    public void setCont_type_id(int cont_type_id) {
+        this.cont_type_id = cont_type_id;
     }
 
     public String getArticleTitle() {
@@ -110,6 +125,14 @@ public class Article {
         this.articleStatusId = articleStatusId;
     }
 
+    public String getArticleClientUUID() {
+        return articleClientUUID;
+    }
+
+    public void setArticleClientUUID(String articleClientUUID) {
+        this.articleClientUUID = articleClientUUID;
+    }
+
     public String getArticleUUID() {
         return articleUUID;
     }
@@ -141,16 +164,22 @@ public class Article {
                 "articleId=" + articleId +
                 ", categoryId=" + categoryId +
                 ", userId=" + userId +
+                ", cont_type_id=" + cont_type_id +
                 ", articleTitle='" + articleTitle + '\'' +
                 ", articleSubTitle='" + articleSubTitle + '\'' +
                 ", articleSlug='" + articleSlug + '\'' +
                 ", articleDescription='" + articleDescription + '\'' +
                 ", articleContent='" + articleContent + '\'' +
                 ", articleStatusId=" + articleStatusId +
+                ", articleClientUUID='" + articleClientUUID + '\'' + 
                 ", articleUUID='" + articleUUID + '\'' +
                 ", articleCreationTimestamp=" + articleCreationTimestamp +
                 ", articleLastUpdTimestamp=" + articleLastUpdTimestamp +
                 '}';
     }
+
+
+    
+
 
 }

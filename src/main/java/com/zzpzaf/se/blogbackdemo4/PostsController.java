@@ -8,12 +8,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.zzpzaf.se.blogbackdemo4.dbObjects.Article;
 import com.zzpzaf.se.blogbackdemo4.dbObjects.ArticleDTO;
 import com.zzpzaf.se.blogbackdemo4.dbObjects.Category;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 @RestController
 public class PostsController {
@@ -91,7 +96,7 @@ public class PostsController {
     @GetMapping(value = "/articles" + "/articleId/{id}")
     public ResponseEntity<ArticleDTO> getArticleById(@PathVariable int id) {
         ArticleDTO article;
-        article = postsRepository.getArticleById(id);
+        article = postsRepository.getArticleDTOById(id);
         if (article != null) {
             return new ResponseEntity<>(article, HttpStatus.OK);
         } else {
@@ -102,12 +107,33 @@ public class PostsController {
     @GetMapping(value = "/articles" + "/articleSlug/{slug}")
     public ResponseEntity<ArticleDTO> getArticleBySlug(@PathVariable String slug) {
         ArticleDTO article;
-        article = postsRepository.getArticleBySlug(slug);
+        article = postsRepository.getArticleDTOBySlug(slug);
         if (article != null) {
             return new ResponseEntity<>(article, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
+    @PostMapping(value = "/articles")
+    public ResponseEntity<ArticleDTO> addArticle(@RequestBody Article article) {
+            ArticleDTO addedArticle = postsRepository.addArticle(article);
+            if (addedArticle != null) {
+                return new ResponseEntity<>(addedArticle, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+            }
+    }
+    
+    @PatchMapping(value = "/articles")
+    public ResponseEntity<ArticleDTO> updateArticle(@RequestBody Article article) {
+        ArticleDTO updatedArticle = postsRepository.updateArticle(article);
+        if (updatedArticle != null) {
+            return new ResponseEntity<>(updatedArticle, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+        }
+    }
+
 
 }
