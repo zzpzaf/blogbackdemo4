@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zzpzaf.se.blogbackdemo4.dbObjects.Article;
 import com.zzpzaf.se.blogbackdemo4.dbObjects.ArticleDTO;
 import com.zzpzaf.se.blogbackdemo4.dbObjects.Category;
+import com.zzpzaf.se.blogbackdemo4.dbObjects.ContentType;
 
 @Repository
 public class PostsRepository implements IPostsRepository {
@@ -27,6 +28,7 @@ public class PostsRepository implements IPostsRepository {
     static final String CATEGORIES_TABLE = "categories";
     static final String ARTICLES_TABLE = "articles";
     static final String USERS_TABLE = "users";
+    static final String CONTENT_TYPES_TABLE = "content_types";
 
     @Override
     public List<Category> getCategories() {
@@ -46,6 +48,28 @@ public class PostsRepository implements IPostsRepository {
         }
         return category;
     }
+
+
+    @Override
+    public List<ContentType> getContentTypes () {
+        logger.info("PostsRepository - getContentTypess");
+        String sql = "SELECT * FROM " + CONTENT_TYPES_TABLE;
+        return jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(ContentType.class));
+    }
+
+    public ContentType getContentTypeById(int id) {
+        String selQuery = "SELECT * FROM " + CONTENT_TYPES_TABLE + " WHERE cont_type_id = ?";
+        ContentType contentType = new ContentType();
+        try {
+            contentType = jdbcTemplate.queryForObject(selQuery, BeanPropertyRowMapper.newInstance(ContentType.class), id);
+        } catch (Exception e) {
+            // logger.info(">===>> PostsRepository ERRORs: " + e.getMessage());
+        }
+        return contentType;
+    }
+
+
+
 
     @Override
     public List<Article> getArticles() {

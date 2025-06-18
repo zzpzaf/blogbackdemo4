@@ -176,3 +176,10 @@ INSERT INTO `content_types` (`cont_type_identifier`) VALUES ('plain');
 INSERT INTO `content_types` (`cont_type_identifier`) VALUES ('mark');
 INSERT INTO `content_types` (`cont_type_identifier`) VALUES ('html');
 COMMIT;
+
+-- ------------------------------------
+-- 250615
+-- ------------------------------------
+BEGIN;
+UPDATE articles SET cont_type_id = 3 WHERE cont_type_id IS NULL;
+COMMIT;

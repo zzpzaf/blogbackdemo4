@@ -15,8 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.zzpzaf.se.blogbackdemo4.dbObjects.Article;
 import com.zzpzaf.se.blogbackdemo4.dbObjects.ArticleDTO;
 import com.zzpzaf.se.blogbackdemo4.dbObjects.Category;
+import com.zzpzaf.se.blogbackdemo4.dbObjects.ContentType;
+
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
+// import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 
@@ -55,6 +57,38 @@ public class PostsController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
+
+    @GetMapping("/contenttypes")
+    public ResponseEntity<List<com.zzpzaf.se.blogbackdemo4.dbObjects.ContentType>> getContentTypes() {
+        logger.info("PostsController - Content Types");
+        List<ContentType> returnContentTypesList = new ArrayList<>();
+        try {
+            returnContentTypesList = postsRepository.getContentTypes();
+            // logger.info(returnCategoriesList);
+            if (returnContentTypesList.size() > 0) {
+                return new ResponseEntity<>(returnContentTypesList, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            // logger.info(">===>> PostsController /contentTypes ERRORs: " + e.getMessage());
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(value = "/contenttypes" + "/contentTypeId/{id}")
+    public ResponseEntity<ContentType> getContentTypeById(@PathVariable int id) {
+        ContentType contentType;
+        contentType = postsRepository.getContentTypeById(id);
+        if (contentType != null) {
+            return new ResponseEntity<>(contentType, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+
 
 
 

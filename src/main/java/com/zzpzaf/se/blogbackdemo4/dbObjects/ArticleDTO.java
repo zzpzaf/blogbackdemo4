@@ -2,10 +2,13 @@ package com.zzpzaf.se.blogbackdemo4.dbObjects;
 
 import java.sql.Timestamp;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class ArticleDTO {
     private int articleId;
     private int categoryId;
     private int userId;
+    @JsonProperty("cont_type_id")
     private int cont_type_id;
     private String articleTitle;
     private String articleSubTitle;
