@@ -179,16 +179,17 @@ public class PostsRepository implements IPostsRepository {
                 "articleSubTitle, " +
                 "articleSlug, " +
                 "articleDescription, " +
+                "cont_type_id = ?, " +
                 "articleContent, " +
                 "articleClientUUID" +
                 ")" +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         // logger.info(">===>> PostsRepository - addArticle() - Adding Article: " + newArticle.toString());
         try {
             status = jdbcTemplate.update(insQuery, newArticle.getCategoryId(), newArticle.getUserId(),
                     newArticle.getArticleTitle(), newArticle.getArticleSubTitle(), newArticle.getArticleSlug(),
-                    newArticle.getArticleDescription(), newArticle.getArticleContent(), newArticle.getArticleClientUUID() );
+                    newArticle.getArticleDescription(), newArticle.getCont_type_id(), newArticle.getArticleContent(), newArticle.getArticleClientUUID() );
         } catch (Exception e) {
             logger.error(">===>> PostsRepository - addArticle() - ERRORs: " + e.getMessage());
         }
@@ -214,13 +215,14 @@ public class PostsRepository implements IPostsRepository {
                 "articleSubTitle = ?, " +
                 "articleSlug = ?, " +
                 "articleDescription = ?, " +
+                "cont_type_id = ?, " +
                 "articleContent = ? " +
                 "WHERE articleUUID = ?";
 
         try {
             status = jdbcTemplate.update(updateQuery, article.getCategoryId(), article.getUserId(),
                     article.getArticleTitle(), article.getArticleSubTitle(), article.getArticleSlug(),
-                    article.getArticleDescription(), article.getArticleContent(), article.getArticleUUID());
+                    article.getArticleDescription(), article.getCont_type_id(), article.getArticleContent(), article.getArticleUUID());
             // logger.info(">===>> PostsRepository - updateArticle() - status: " + status ); 
         } catch (Exception e) {
             logger.error(">===>> PostsRepository - updateArticle() - ERRORs: " + e.getMessage());
