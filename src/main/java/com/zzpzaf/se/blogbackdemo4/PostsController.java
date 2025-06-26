@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -169,5 +170,18 @@ public class PostsController {
         }
     }
 
+
+    @DeleteMapping(value = "/articles")
+    public ResponseEntity<Void> deleteArticle(@RequestBody Article article) {
+        if (article == null || article.getArticleUUID() == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        boolean deleted = postsRepository.deleteArticleByUUID(article.getArticleUUID());
+        if (deleted) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 
 }

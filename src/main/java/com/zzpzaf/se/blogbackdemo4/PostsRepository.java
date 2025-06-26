@@ -175,11 +175,11 @@ public class PostsRepository implements IPostsRepository {
         String insQuery = "INSERT INTO " + ARTICLES_TABLE + " ( " +
                 "categoryId, " +
                 "userId, " +
+                "cont_type_id, " +
                 "articleTitle, " +
                 "articleSubTitle, " +
                 "articleSlug, " +
                 "articleDescription, " +
-                "cont_type_id = ?, " +
                 "articleContent, " +
                 "articleClientUUID" +
                 ")" +
@@ -187,9 +187,9 @@ public class PostsRepository implements IPostsRepository {
 
         // logger.info(">===>> PostsRepository - addArticle() - Adding Article: " + newArticle.toString());
         try {
-            status = jdbcTemplate.update(insQuery, newArticle.getCategoryId(), newArticle.getUserId(),
+            status = jdbcTemplate.update(insQuery, newArticle.getCategoryId(), newArticle.getUserId(), newArticle.getCont_type_id(),
                     newArticle.getArticleTitle(), newArticle.getArticleSubTitle(), newArticle.getArticleSlug(),
-                    newArticle.getArticleDescription(), newArticle.getCont_type_id(), newArticle.getArticleContent(), newArticle.getArticleClientUUID() );
+                    newArticle.getArticleDescription(),  newArticle.getArticleContent(), newArticle.getArticleClientUUID() );
         } catch (Exception e) {
             logger.error(">===>> PostsRepository - addArticle() - ERRORs: " + e.getMessage());
         }
@@ -211,18 +211,18 @@ public class PostsRepository implements IPostsRepository {
         String updateQuery = "UPDATE " + ARTICLES_TABLE + " SET " +
                 "categoryId = ?, " +
                 "userId = ?, " +
+                "cont_type_id = ?, " +
                 "articleTitle = ?, " +
                 "articleSubTitle = ?, " +
                 "articleSlug = ?, " +
                 "articleDescription = ?, " +
-                "cont_type_id = ?, " +
                 "articleContent = ? " +
                 "WHERE articleUUID = ?";
 
         try {
-            status = jdbcTemplate.update(updateQuery, article.getCategoryId(), article.getUserId(),
+            status = jdbcTemplate.update(updateQuery, article.getCategoryId(), article.getUserId(), article.getCont_type_id(),
                     article.getArticleTitle(), article.getArticleSubTitle(), article.getArticleSlug(),
-                    article.getArticleDescription(), article.getCont_type_id(), article.getArticleContent(), article.getArticleUUID());
+                    article.getArticleDescription(), article.getArticleContent(), article.getArticleUUID());
             // logger.info(">===>> PostsRepository - updateArticle() - status: " + status ); 
         } catch (Exception e) {
             logger.error(">===>> PostsRepository - updateArticle() - ERRORs: " + e.getMessage());
@@ -310,6 +310,22 @@ public class PostsRepository implements IPostsRepository {
         return article;
     }
 
+
+    // ...existing code...
+
+    @Override
+    @Transactional(rollbackFor = java.lang.Exception.class)
+    public boolean deleteArticleByUUID(String uuid) {
+        String deleteQuery = "DELETE FROM " + ARTICLES_TABLE + " WHERE articleUUID = ?";
+        int rowsAffected = 0;
+        try {
+            rowsAffected = jdbcTemplate.update(deleteQuery, uuid);
+            logger.info(">===>> PostsRepository - deleteArticleByUUID() - Deleted rows: " + rowsAffected);
+        } catch (Exception e) {
+            logger.error(">===>> PostsRepository - deleteArticleByUUID() - ERRORs: " + e.getMessage());
+        }
+        return rowsAffected == 1; // Return true if 1 row/record was deleted
+    }
 
 
 }

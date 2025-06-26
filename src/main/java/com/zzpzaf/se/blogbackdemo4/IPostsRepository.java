@@ -27,7 +27,7 @@ public interface IPostsRepository {
     ArticleDTO addArticle(Article newArticle);
     ArticleDTO updateArticle(Article newArticle);
 
-
+    boolean deleteArticleByUUID(String uuid);
 
 }
 
